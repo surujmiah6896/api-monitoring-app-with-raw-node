@@ -22,10 +22,8 @@ handler.notFoundHandler = (requestProperties, callback) => {
 
   // Check the request method
   if (requestProperties.method === 'get') {
-    // Respond with a not found message
     callback(404, response);
   } else {
-    // Respond with a method not allowed error
     callback(405, {
       message: 'Method Not Allowed',
       status: 'error',
