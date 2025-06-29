@@ -21,6 +21,11 @@
         },
         {
             "usePrettierrc": false
+        },
+        {
+            "fileInfoOptions": {
+              "withNodeModules": true
+            }
           }
       ]
     },
