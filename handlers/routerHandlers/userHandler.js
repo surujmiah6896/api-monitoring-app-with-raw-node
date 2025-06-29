@@ -1,6 +1,6 @@
 /**
 |--------------------------------------------------
-| Title: Home Handler
+| Title: User Handler
 | Description: Application routes for handling API requests.
 | Author: Md. Suruj Miah
 | Email:surujmiah6896@gmail.com
@@ -10,19 +10,20 @@
 |--------------------------------------------------
 */
 
-// module dependencies
-const handler = {};
 
-handler.homeHandler = (requestProperties, callback) => {
+// module dependencies
+const handler = {}; 
+
+handler.userHandler = (requestProperties, callback) => {
   const response = {
-    message: 'Welcome to the Home Page',
-    status: 'success',
+    message: 'The requested resource was User ',
+    status: 'error',
   };
 
   // Check the request method
   if (requestProperties.method === 'get') {
-    // Respond with a success message
-    callback(200, response);
+    // Respond with a not found message
+    callback(404, response);
   } else {
     // Respond with a method not allowed error
     callback(405, {

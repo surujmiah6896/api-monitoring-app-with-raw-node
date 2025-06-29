@@ -11,11 +11,11 @@
 */
 // Dependencies
 const {homeHandler} = require('../handlers/routerHandlers/homeHandler');
-const {notFoundHandler} = require('../handlers/routerHandlers/notFoundHandler');
+const {userHandler} = require('../handlers/routerHandlers/userHandler');
 
 const routes = {
     home: homeHandler,
-    notFound: notFoundHandler,
+    user: userHandler,
 };
 
 module.exports = routes;

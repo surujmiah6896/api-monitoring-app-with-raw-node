@@ -22,38 +22,38 @@ const data = require('./lib/data');
 const app = {};
 
 
-data.create('test', 'newFile', { name: 'Suruj Miah', age: 28 }, (err) => {
-  if (!err) {
-    console.log('File created successfully');
-  } else {
-    console.error('Error creating file:', err);
-  }
-});
+// data.create('test', 'newFile', { name: 'Suruj Miah', age: 28 }, (err) => {
+//   if (!err) {
+//     console.log('File created successfully');
+//   } else {
+//     console.error('Error creating file:', err);
+//   }
+// });
 
-data.read('test', 'newFile', (err, data) => {
-  if (!err && data) {
-    console.log('File read successfully:', data);
-  } else {
-    console.error('Error reading file:', err);
-  }
-});
+// data.read('test', 'newFile', (err, data) => {
+//   if (!err && data) {
+//     console.log('File read successfully:', data);
+//   } else {
+//     console.error('Error reading file:', err);
+//   }
+// });
 
-data.update('test', 'newFile', [{ name: 'Suruj Miah', age: 29 },{ name: 'jamal', age: 28 }], (err) => {
-  if (!err) {
-    console.log('File updated successfully');
-  } else {
-    console.error('Error updating file:', err);
-  }
-});
+// data.update('test', 'newFile', [{ name: 'Suruj Miah', age: 29 },{ name: 'jamal', age: 28 }], (err) => {
+//   if (!err) {
+//     console.log('File updated successfully');
+//   } else {
+//     console.error('Error updating file:', err);
+//   }
+// });
 
 
-data.delete('test', 'newFile', (err) => {
-  if (!err) {
-    console.log('File deleted successfully');
-  } else {
-    console.error('Error deleting file:', err);
-  }
-});
+// data.delete('test', 'newFile', (err) => {
+//   if (!err) {
+//     console.log('File deleted successfully');
+//   } else {
+//     console.error('Error deleting file:', err);
+//   }
+// });
 
 
 // Configuration

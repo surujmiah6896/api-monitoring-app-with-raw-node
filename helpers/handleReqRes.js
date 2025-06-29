@@ -21,6 +21,7 @@ const url = require('url');
 const { StringDecoder } = require('string_decoder');
 const routes = require('../route/routes');
 const { notFoundHandler } = require('../handlers/routerHandlers/notFoundHandler');
+const { log } = require('console');
 
 const handler = {};
 
@@ -53,7 +54,7 @@ handler.handleReqRes = (req, res) => {
         const payloadString = JSON.stringify(payload);
 
         // Set the response headers
-        //   res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Content-Type', 'application/json');
         res.writeHead(statusCode);
 
         // Send the response
