@@ -31,3 +31,6 @@ handler.homeHandler = (requestProperties, callback) => {
     });
   }
 }
+
+// Export the handler
+module.exports = handler;
