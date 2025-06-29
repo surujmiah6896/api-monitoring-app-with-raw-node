@@ -12,9 +12,11 @@
 |--------------------------------------------------
 */
 
+// Create a module object
+const utilities = {};
 
 // Module dependencies
-const utilities = {};
+const crypto = require('crypto');
 const environments = require('./environments');
 
 // Parse JSON string to object
@@ -31,12 +33,14 @@ utilities.parseJsonToObject = (jsonString) => {
 }
 
 //Create Hash 
-utilities.createHash = (str) => {
+utilities.Hash = (str) => {
   if (typeof str === 'string' && str.length > 0) {
-    const crypto = require('crypto');
     const hash = crypto.createHmac('sha256', environments[process.env.NODE_ENV].secretKry).update(str).digest('hex');
     return hash;
   } else {
     return false;
   }
 }
+
+// Export the utilities module
+module.exports = utilities;
