@@ -257,30 +257,47 @@ handler._users.delete = (requestProperties, callback) => {
       : false;
 
   if (phone) {
-    // Lookup the user
-    data.read("users", phone, (err, userData) => {
-      if (!err && userData) {
-        // Delete the user
-        data.delete("users", phone, (err) => {
-          if (!err) {
-            callback(200, {
-              message: "User deleted successfully",
-              status: "success",
+
+    // verify token
+    const token =
+    typeof requestProperties.headersObject.token === 'string'
+        ? requestProperties.headersObject.token
+        : false;
+
+    tokenHandler._token.verify(token, phone, (tokenId) => {
+      if (tokenId) {
+        // Lookup the user
+        data.read("users", phone, (err, userData) => {
+          if (!err && userData) {
+            // Delete the user
+            data.delete("users", phone, (err) => {
+              if (!err) {
+                callback(200, {
+                  message: "User deleted successfully",
+                  status: "success",
+                });
+              } else {
+                callback(500, {
+                  message: "Could not delete the user",
+                  status: "error",
+                });
+              }
             });
           } else {
-            callback(500, {
-              message: "Could not delete the user",
+            callback(404, {
+              message: "User not found",
               status: "error",
             });
           }
         });
-      } else {
-        callback(404, {
-          message: "User not found",
+      }else{
+        return callback(403, {
+          message: "Authentication failed",
           status: "error",
         });
       }
     });
+    
   } else {
     callback(400, {
       message: "Invalid phone number",
