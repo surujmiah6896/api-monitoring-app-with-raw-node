@@ -28,14 +28,14 @@ utilities.parseJsonToObject = (jsonString) => {
   } catch (error) {
     output = {};
   }
-
+  
   return output;
 }
 
 //Create Hash 
 utilities.Hash = (str) => {
   if (typeof str === 'string' && str.length > 0) {
-    const hash = crypto.createHmac('sha256', environments[process.env.NODE_ENV].secretKry).update(str).digest('hex');
+    const hash = crypto.createHmac('sha256', environments.secretKey).update(str).digest('hex');
     return hash;
   } else {
     return false;
