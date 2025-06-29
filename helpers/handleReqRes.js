@@ -46,22 +46,6 @@ handler.handleReqRes = (req, res) => {
 
     const chosenHandler = routes[path] ? routes[path] : notFoundHandler;
 
-    requestProperties.body = parseJsonToObject(realData);
-    chosenHandler(requestProperties, (statusCode, payload) => {
-        statusCode = typeof statusCode === 'number' ? statusCode : 500;
-        payload = typeof payload === 'object' ? payload : {};
-
-        // Convert payload to a string
-        const payloadString = JSON.stringify(payload);
-
-        // Set the response headers
-        res.setHeader('Content-Type', 'application/json');
-        res.writeHead(statusCode);
-
-        // Send the response
-        res.end(payloadString);
-    });
-
     // Collect the data from the request
     req.on('data', (buffer) => {
         realData += decoder.write(buffer);
@@ -70,10 +54,24 @@ handler.handleReqRes = (req, res) => {
     // End the request
     req.on('end', () => {
         realData += decoder.end();
+        
+        requestProperties.body = parseJsonToObject(realData);
 
-        console.log(realData);
-        // response end
-        res.end('Hello from the server!');
+        chosenHandler(requestProperties, (statusCode, payload) => {
+            statusCode = typeof statusCode === 'number' ? statusCode : 500;
+            payload = typeof payload === 'object' ? payload : {};
+    
+            // Convert payload to a string
+            const payloadString = JSON.stringify(payload);
+    
+            // Set the response headers
+            res.setHeader('Content-Type', 'application/json');
+            res.writeHead(statusCode);
+    
+            // Send the response
+            res.end(payloadString);
+        });
+        
     });
 };
 

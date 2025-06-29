@@ -15,59 +15,22 @@
 // Dependencies
 const http = require('http');
 const { handleReqRes } = require('./helpers/handleReqRes');
-const environment = require('./helpers/environments');
-const data = require('./lib/data');
 
 // application object
 const app = {};
 
 
-// data.create('test', 'newFile', { name: 'Suruj Miah', age: 28 }, (err) => {
-//   if (!err) {
-//     console.log('File created successfully');
-//   } else {
-//     console.error('Error creating file:', err);
-//   }
-// });
-
-// data.read('test', 'newFile', (err, data) => {
-//   if (!err && data) {
-//     console.log('File read successfully:', data);
-//   } else {
-//     console.error('Error reading file:', err);
-//   }
-// });
-
-// data.update('test', 'newFile', [{ name: 'Suruj Miah', age: 29 },{ name: 'jamal', age: 28 }], (err) => {
-//   if (!err) {
-//     console.log('File updated successfully');
-//   } else {
-//     console.error('Error updating file:', err);
-//   }
-// });
-
-
-// data.delete('test', 'newFile', (err) => {
-//   if (!err) {
-//     console.log('File deleted successfully');
-//   } else {
-//     console.error('Error deleting file:', err);
-//   }
-// });
-
-
 // Configuration
 app.config = {
   port: 3000,
-  envName: 'development',
 }
 
 // Create server
 app.createServer = () => {
   const server = http.createServer(app.handleReqRes);
   // Start the server
-  server.listen(environment.port, () => {
-    console.log(`Server is running on port ${environment.port}`);
+  server.listen(app.config.port, () => {
+    console.log(`Server is running on port ${app.config.port}`);
   });
 }
 

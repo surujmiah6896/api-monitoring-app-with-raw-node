@@ -14,7 +14,8 @@
 // module dependencies
 const handler = {}; 
 const data = require('../../lib/data');
-const { parseJsonToObject , Hash } = require('../../helpers/utilities');
+const { parseJsonToObject} = require('../../helpers/utilities');
+const { Hash} = require('../../helpers/utilities');
 
 handler.userHandler = (requestProperties, callback) => {
 
@@ -35,12 +36,16 @@ handler._users = {};
 // Users - post
 handler._users.post = (requestProperties, callback) => {
     // Validate the inputs
-    const firstName = typeof(requestProperties.body.firstName) === 'string' && requestProperties.body.firstName.trim().length > 0 ? requestProperties.body.firstName.trim() : false;
+    console.log(`Request Body: ${JSON.stringify(requestProperties.body)}`);
+    console.log(`Type of: ${requestProperties.body.firstName}`);
+    
+    const firstName = typeof requestProperties.body.firstName === 'string' && requestProperties.body.firstName.trim().length > 0 ? requestProperties.body.firstName : false;
     const lastName = typeof(requestProperties.body.lastName) === 'string' && requestProperties.body.lastName.trim().length > 0 ? requestProperties.body.lastName.trim() : false;
     const phone = typeof(requestProperties.body.phone) === 'string' && requestProperties.body.phone.trim().length === 11 ? requestProperties.body.phone.trim() : false;
     const password = typeof(requestProperties.body.password) === 'string' && requestProperties.body.password.trim().length > 0 ? requestProperties.body.password.trim() : false;
     const tosAgreement = typeof(requestProperties.body.tosAgreement) === 'boolean' && requestProperties.body.tosAgreement === true ? true : false;
-
+    console.log(`First Name: ${firstName}, Last Name: ${lastName}, Phone: ${phone}, Password: ${password}, TOS Agreement: ${tosAgreement}`);
+    
     if(firstName && lastName && phone && password && tosAgreement) {
         // Make sure that the user does not already exist
         data.read('users', phone, (err, userData) => {
