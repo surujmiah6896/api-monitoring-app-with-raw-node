@@ -10,10 +10,12 @@
 |--------------------------------------------------
 */
 // Dependencies
-const homeHandler = '';
+const {homeHandler} = require('../handlers/routerHandlers/homeHandler');
+const {notFoundHandler} = require('../handlers/routerHandlers/notFoundHandler');
 
 const routes = {
     home: homeHandler,
+    notFound: notFoundHandler,
 };
 
 module.exports = routes;
