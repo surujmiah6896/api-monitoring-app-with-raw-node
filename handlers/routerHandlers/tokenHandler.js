@@ -128,3 +128,48 @@ handler._tokens.put = (requestProperties, callback) => {
     callback(400, { error: 'Missing required field(s) or field(s) are invalid' });
   }
 }
+
+
+// Tokens - delete
+handler._tokens.delete = (requestProperties, callback) => {
+  // Check that the id is valid
+  const id = typeof(requestProperties.queryStringObject.id) === 'string' && requestProperties.queryStringObject.id.trim().length === 20 ? requestProperties.queryStringObject.id.trim() : false;
+
+  if (id) {
+    // Lookup the token
+    data.read('tokens', id, (err, tokenData) => {
+      if (!err && tokenData) {
+        // Delete the token
+        data.delete('tokens', id, (err) => {
+          if (!err) {
+            callback(200);
+          } else {
+            callback(500, { error: 'Could not delete the specified token' });
+          }
+        });
+      } else {
+        callback(400, { error: 'Could not find the specified token' });
+      }
+    });
+  } else {
+    callback(400, { error: 'Missing required field' });
+  }
+}
+
+// Verify if a given token id is currently valid for a given user
+
+handler._tokens.verifyToken = (id, phone, callback) => {
+  // Lookup the token
+  data.read('tokens', id, (err, tokenData) => {
+    if (!err && tokenData) {
+      // Check that the token is for the given user and has not expired
+      if (tokenData.phone === phone && tokenData.expires > Date.now()) {
+        callback(true);
+      } else {
+        callback(false);
+      }
+    } else {
+      callback(false);
+    }
+  });
+}
