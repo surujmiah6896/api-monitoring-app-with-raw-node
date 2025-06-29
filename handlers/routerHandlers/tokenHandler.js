@@ -26,3 +26,48 @@ handler.tokenHandler = (requestProperties, callback) => {
     callback(405);
   }
 }
+
+handler._tokens = {};
+
+// Tokens - post
+handler._tokens.post = (requestProperties, callback) => {
+  // Validate inputs
+  const phone = typeof(requestProperties.body.phone) === 'string' && requestProperties.body.phone.trim().length === 11 ? requestProperties.body.phone.trim() : false;
+  const password = typeof(requestProperties.body.password) === 'string' && requestProperties.body.password.trim().length > 0 ? requestProperties.body.password.trim() : false;
+
+  if (phone && password) {
+    // Lookup the user who matches that phone number
+    data.read('users', phone, (err, userData) => {
+      if (!err && userData) {
+        // Hash the sent password and compare it to the password stored in the user object
+        const hashedPassword = Hash(password);
+        if (hashedPassword === userData.password) {
+          // If valid, create a new token with a random name. Set expiration date 1 hour in the future.
+          const tokenId = createRandomString(20);
+          const expires = Date.now() + 1000 * 60 * 60; // 1 hour
+
+          const tokenObject = {
+            phone,
+            id: tokenId,
+            expires,
+          };
+
+          // Store the token
+          data.create('tokens', tokenId, tokenObject, (err) => {
+            if (!err) {
+              callback(200, tokenObject);
+            } else {
+              callback(500, { error: 'Could not create the new token' });
+            }
+          });
+        } else {
+          callback(400, { error: 'Password did not match' });
+        }
+      } else {
+        callback(400, { error: 'Could not find the specified user' });
+      }
+    });
+  } else {
+    callback(400, { error: 'Missing required fields' });
+  }
+}
