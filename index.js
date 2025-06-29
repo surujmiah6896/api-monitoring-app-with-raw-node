@@ -38,13 +38,23 @@ data.read('test', 'newFile', (err, data) => {
   }
 });
 
-data.update('test', 'newFile', { name: 'Suruj Miah', age: 29 }, (err) => {
+data.update('test', 'newFile', [{ name: 'Suruj Miah', age: 29 },{ name: 'jamal', age: 28 }], (err) => {
   if (!err) {
     console.log('File updated successfully');
   } else {
     console.error('Error updating file:', err);
   }
 });
+
+
+data.delete('test', 'newFile', (err) => {
+  if (!err) {
+    console.log('File deleted successfully');
+  } else {
+    console.error('Error deleting file:', err);
+  }
+});
+
 
 // Configuration
 app.config = {
