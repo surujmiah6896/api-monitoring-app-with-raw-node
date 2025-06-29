@@ -28,7 +28,7 @@ utilities.parseJsonToObject = (jsonString) => {
   } catch (error) {
     output = {};
   }
-  
+
   return output;
 }
 
@@ -41,6 +41,26 @@ utilities.Hash = (str) => {
     return false;
   }
 }
+
+// create random string
+utilities.createRandomString = (strlength) => {
+  let length = strlength;
+  length = typeof strlength === 'number' && strlength > 0 ? strlength : false;
+
+  if (length) {
+      const characters = 'abcdefghijklmnopqrstuvwxyz1234567890';
+      let output = '';
+      for (let i = 1; i <= length; i += 1) {
+          const randomCharacter = characters.charAt(
+            Math.floor(Math.random() * characters.length)
+          );
+          output += randomCharacter;
+      }
+      return output;
+  }
+  return false;
+};
+
 
 // Export the utilities module
 module.exports = utilities;
