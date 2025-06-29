@@ -142,5 +142,80 @@ handler._users.get = (requestProperties, callback) => {
   }
 };
 
+// Users - put
+handler._users.put = (requestProperties, callback) => {
+  // Validate the inputs
+  const firstName =
+    typeof requestProperties.body.firstName === "string" &&
+    requestProperties.body.firstName.trim().length > 0
+      ? requestProperties.body.firstName
+      : false;
+  const lastName =
+    typeof requestProperties.body.lastName === "string" &&
+    requestProperties.body.lastName.trim().length > 0
+      ? requestProperties.body.lastName.trim()
+      : false;
+  const phone =
+    typeof requestProperties.body.phone === "string" &&
+    requestProperties.body.phone.trim().length === 11
+      ? requestProperties.body.phone.trim()
+      : false;
+  const password =
+    typeof requestProperties.body.password === "string" &&
+    requestProperties.body.password.trim().length > 0
+      ? requestProperties.body.password.trim()
+      : false;
+
+  if (phone) {
+    if (firstName || lastName || password) {
+      // Lookup the user
+      data.read("users", phone, (err, userData) => {
+        if (!err && userData) {
+          // Update the fields that need to be updated
+          if (firstName) {
+            userData.firstName = firstName;
+          }
+          if (lastName) {
+            userData.lastName = lastName;
+          }
+          if (password) {
+            userData.password = Hash(password);
+          }
+
+          // Store the new updates
+          data.update("users", phone, userData, (err) => {
+            if (!err) {
+              callback(200, {
+                message: "User updated successfully",
+                status: "success",
+              });
+            } else {
+              callback(500, {
+                message: "Could not update the user",
+                status: "error",
+              });
+            }
+          });
+        } else {
+          callback(404, {
+            message: "User not found",
+            status: "error",
+          });
+        }
+      });
+    } else {
+      callback(400, {
+        message: "Invalid inputs",
+        status: "error",
+      });
+    }
+  } else {
+    callback(400, {
+      message: "Invalid phone number",
+      status: "error",
+    });
+  }
+};
+
 // Export the handler
 module.exports = handler;
