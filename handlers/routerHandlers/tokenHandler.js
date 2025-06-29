@@ -92,3 +92,39 @@ handler._tokens.get = (requestProperties, callback) => {
     callback(400, { error: 'Missing required field' });
   }
 }
+
+
+// Tokens - put
+handler._tokens.put = (requestProperties, callback) => {
+  // Validate inputs
+  const id = typeof(requestProperties.body.id) === 'string' && requestProperties.body.id.trim().length === 20 ? requestProperties.body.id.trim() : false;
+  const extend = !!requestProperties.body.extend;
+
+  if (id && extend) {
+    // Lookup the token
+    data.read('tokens', id, (err, tokenData) => {
+      if (!err && tokenData) {
+        // Check to make sure the token isn't already expired
+        if (tokenData.expires > Date.now()) {
+          // Set the expiration an hour from now
+          tokenData.expires = Date.now() + 1000 * 60 * 60;
+
+          // Store the new updates
+          data.update('tokens', id, tokenData, (err) => {
+            if (!err) {
+              callback(200);
+            } else {
+              callback(500, { error: 'Could not update the token expiration' });
+            }
+          });
+        } else {
+          callback(400, { error: 'Token has already expired and cannot be extended' });
+        }
+      } else {
+        callback(400, { error: 'Specified token does not exist' });
+      }
+    });
+  } else {
+    callback(400, { error: 'Missing required field(s) or field(s) are invalid' });
+  }
+}
