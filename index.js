@@ -38,6 +38,14 @@ data.read('test', 'newFile', (err, data) => {
   }
 });
 
+data.update('test', 'newFile', { name: 'Suruj Miah', age: 29 }, (err) => {
+  if (!err) {
+    console.log('File updated successfully');
+  } else {
+    console.error('Error updating file:', err);
+  }
+});
+
 // Configuration
 app.config = {
   port: 3000,
