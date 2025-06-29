@@ -129,7 +129,7 @@ handler._users.get = (requestProperties, callback) => {
         ? requestProperties.headersObject.token
         : false;
     tokenHandler._token.verify(token, phone, (tokenId) => {
-      if(tokenId) {
+      if (tokenId) {
         data.read("users", phone, (err, userData) => {
           if (!err && userData) {
             // Remove the password from the user object before returning it
@@ -149,7 +149,6 @@ handler._users.get = (requestProperties, callback) => {
         });
       }
     });
-    
   } else {
     callback(400, {
       message: "Invalid phone number",
@@ -183,44 +182,57 @@ handler._users.put = (requestProperties, callback) => {
       : false;
 
   if (phone) {
-   
-
     if (firstName || lastName || password) {
-      // Lookup the user
-      data.read("users", phone, (err, userData) => {
-        if (!err && userData) {
-          // Update the fields that need to be updated
-          if (firstName) {
-            userData.firstName = firstName;
-          }
-          if (lastName) {
-            userData.lastName = lastName;
-          }
-          if (password) {
-            userData.password = Hash(password);
-          }
+      // verify token
+      const token =
+        typeof requestProperties.headersObject.token === "string"
+          ? requestProperties.headersObject.token
+          : false;
+      tokenHandler._token.verify(token, phone, (tokenId) => {
+        if (tokenId) {
+          // Lookup the user
+          data.read("users", phone, (err, userData) => {
+            if (!err && userData) {
+              // Update the fields that need to be updated
+              if (firstName) {
+                userData.firstName = firstName;
+              }
+              if (lastName) {
+                userData.lastName = lastName;
+              }
+              if (password) {
+                userData.password = Hash(password);
+              }
 
-          // Store the new updates
-          data.update("users", phone, userData, (err) => {
-            if (!err) {
-              callback(200, {
-                message: "User updated successfully",
-                status: "success",
+              // Store the new updates
+              data.update("users", phone, userData, (err) => {
+                if (!err) {
+                  callback(200, {
+                    message: "User updated successfully",
+                    status: "success",
+                  });
+                } else {
+                  callback(500, {
+                    message: "Could not update the user",
+                    status: "error",
+                  });
+                }
               });
             } else {
-              callback(500, {
-                message: "Could not update the user",
+              callback(404, {
+                message: "User not found",
                 status: "error",
               });
             }
           });
         } else {
-          callback(404, {
-            message: "User not found",
+          return callback(403, {
+            message: "Authentication failed",
             status: "error",
           });
         }
       });
+      
     } else {
       callback(400, {
         message: "Invalid inputs",
