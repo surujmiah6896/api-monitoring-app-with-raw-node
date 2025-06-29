@@ -173,3 +173,6 @@ handler._tokens.verifyToken = (id, phone, callback) => {
     }
   });
 }
+
+// Export the handler
+module.exports = handler.tokenHandler;

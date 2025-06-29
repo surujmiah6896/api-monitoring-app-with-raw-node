@@ -15,6 +15,7 @@ const handler = {};
 const data = require("../../lib/data");
 const { parseJsonToObject } = require("../../helpers/utilities");
 const { Hash } = require("../../helpers/utilities");
+const tokenHandler = require("./tokenHandler");
 
 handler.userHandler = (requestProperties, callback) => {
   const acceptedMethods = ["get", "post", "put", "delete"];
@@ -122,18 +123,33 @@ handler._users.get = (requestProperties, callback) => {
   console.log("phone", phone);
 
   if (phone) {
-    data.read("users", phone, (err, userData) => {
-      if (!err && userData) {
-        // Remove the password from the user object before returning it
-        // delete userData.password;
-        callback(200, userData);
+    // verify token
+    const token =
+      typeof requestProperties.headersObject.token === "string"
+        ? requestProperties.headersObject.token
+        : false;
+    tokenHandler._token.verify(token, phone, (tokenId) => {
+      if(tokenId) {
+        data.read("users", phone, (err, userData) => {
+          if (!err && userData) {
+            // Remove the password from the user object before returning it
+            delete userData.password;
+            callback(200, userData);
+          } else {
+            callback(404, {
+              message: "User not found",
+              status: "error",
+            });
+          }
+        });
       } else {
-        callback(404, {
-          message: "User not found",
+        return callback(403, {
+          message: "Authentication failed",
           status: "error",
         });
       }
     });
+    
   } else {
     callback(400, {
       message: "Invalid phone number",
@@ -167,6 +183,8 @@ handler._users.put = (requestProperties, callback) => {
       : false;
 
   if (phone) {
+   
+
     if (firstName || lastName || password) {
       // Lookup the user
       data.read("users", phone, (err, userData) => {
