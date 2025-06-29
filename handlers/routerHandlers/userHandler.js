@@ -217,5 +217,47 @@ handler._users.put = (requestProperties, callback) => {
   }
 };
 
+// Users - delete
+handler._users.delete = (requestProperties, callback) => {
+  // Check the phone number
+  const phone =
+    typeof requestProperties.body.phone === "string" &&
+    requestProperties.body.phone.trim().length === 11
+      ? requestProperties.body.phone.trim()
+      : false;
+
+  if (phone) {
+    // Lookup the user
+    data.read("users", phone, (err, userData) => {
+      if (!err && userData) {
+        // Delete the user
+        data.delete("users", phone, (err) => {
+          if (!err) {
+            callback(200, {
+              message: "User deleted successfully",
+              status: "success",
+            });
+          } else {
+            callback(500, {
+              message: "Could not delete the user",
+              status: "error",
+            });
+          }
+        });
+      } else {
+        callback(404, {
+          message: "User not found",
+          status: "error",
+        });
+      }
+    });
+  } else {
+    callback(400, {
+      message: "Invalid phone number",
+      status: "error",
+    });
+  }
+};
+
 // Export the handler
 module.exports = handler;
