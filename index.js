@@ -16,9 +16,27 @@
 const http = require('http');
 const { handleReqRes } = require('./helpers/handleReqRes');
 const environment = require('./helpers/environments');
+const data = require('./lib/data');
 
 // application object
 const app = {};
+
+
+data.create('test', 'newFile', { name: 'Suruj Miah', age: 28 }, (err) => {
+  if (!err) {
+    console.log('File created successfully');
+  } else {
+    console.error('Error creating file:', err);
+  }
+});
+
+data.read('test', 'newFile', (err, data) => {
+  if (!err && data) {
+    console.log('File read successfully:', data);
+  } else {
+    console.error('Error reading file:', err);
+  }
+});
 
 // Configuration
 app.config = {
