@@ -15,6 +15,7 @@
 
 // Module dependencies
 const utilities = {};
+const environments = require('./environments');
 
 // Parse JSON string to object
 utilities.parseJsonToObject = (jsonString) => {
@@ -25,6 +26,17 @@ utilities.parseJsonToObject = (jsonString) => {
   } catch (error) {
     output = {};
   }
-  
+
   return output;
+}
+
+//Create Hash 
+utilities.createHash = (str) => {
+  if (typeof str === 'string' && str.length > 0) {
+    const crypto = require('crypto');
+    const hash = crypto.createHmac('sha256', environments[process.env.NODE_ENV].secretKry).update(str).digest('hex');
+    return hash;
+  } else {
+    return false;
+  }
 }
