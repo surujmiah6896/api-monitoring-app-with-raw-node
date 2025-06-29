@@ -71,3 +71,24 @@ handler._tokens.post = (requestProperties, callback) => {
     callback(400, { error: 'Missing required fields' });
   }
 }
+
+// Tokens - get
+handler._tokens.get = (requestProperties, callback) => {
+  // Check if the id is valid
+  const id = typeof(requestProperties.queryStringObject.id) === 'string' && requestProperties.queryStringObject.id.trim().length === 20 ? requestProperties.queryStringObject.id.trim() : false;
+
+  if (id) {
+    // Lookup the token
+    data.read('tokens', id, (err, tokenData) => {
+      if (!err && tokenData) {
+        // Remove the hashed password from the token object before returning it to the requester
+        delete tokenData.password;
+        callback(200, tokenData);
+      } else {
+        callback(404, { error: 'Token not found' });
+      }
+    });
+  } else {
+    callback(400, { error: 'Missing required field' });
+  }
+}
