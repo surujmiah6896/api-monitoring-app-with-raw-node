@@ -13,11 +13,13 @@
 const { homeHandler } = require("../handlers/routerHandlers/homeHandler");
 const { userHandler } = require("../handlers/routerHandlers/userHandler");
 const { tokenHandler } = require('../handlers/routerHandlers/tokenHandler');
+const { checkHandler } = require('../handlers/routerHandlers/checkHandler');
 
 const routes = {
     home: homeHandler,
     user: userHandler,
     token: tokenHandler,
+    check: checkHandler,
 };
 
 module.exports = routes;
