@@ -120,14 +120,9 @@ handler._users.get = (requestProperties, callback) => {
     requestProperties.body.phone.trim().length === 11
       ? requestProperties.body.phone.trim()
       : false;
-  console.log("phone", phone);
 
   if (phone) {
     // verify token
-    console.log(
-      "requestProperties.headers",
-      requestProperties.headers.token === "string"
-    );
     
     const token =
       typeof requestProperties.headers.token === "string"
