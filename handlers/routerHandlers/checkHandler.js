@@ -168,6 +168,45 @@ handler._checks.post = (requestProperties, callback) => {
   }
 };  
 
+// Checks - get
+handler._checks.get = (requestProperties, callback) => {
+  // Check if the id is valid
+  const id =
+    typeof requestProperties.queryStringObject.id === "string" &&
+    requestProperties.queryStringObject.id.trim().length === 20
+      ? requestProperties.queryStringObject.id.trim()
+      : false;
+
+  if (id) {
+    // Lookup the check
+    data.read("checks", id, (err, checkData) => {
+      if (!err && checkData) {
+        // Verify token
+        const token =
+          typeof requestProperties.headers.token === "string"
+            ? requestProperties.headers.token
+            : false;
+        // token verification
+        tokenHandler._token.verify(token, checkData.userPhone, (tokenIsValid) => {
+            if (tokenIsValid) {
+              // Return the check data
+              callback(200, parseJsonToObject(checkData));
+            } else {
+              callback(403, {
+                message: "Authentication failed",
+                status: "error",
+              });
+            }
+        });
+      } else {
+        callback(404, { error: "Check not found" });
+      }
+    });
+  } else {
+    callback(400, { error: "Missing required field" });
+  }
+};
+
 
 
 //export the handler
