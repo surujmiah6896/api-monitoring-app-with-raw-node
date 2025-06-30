@@ -16,11 +16,9 @@
 const https = require('https');
 const querystring = require('querystring');
 const { twilio } = require('./environments');
-const path = require('path');
 
 // Create a module object
 const notification = {};
-
 
 // Send SMS notification
 notification.sendTwilioSms = (phone, msg, callback) => {
@@ -73,7 +71,6 @@ notification.sendTwilioSms = (phone, msg, callback) => {
       callback("Given parameters were missing or invalid");
     }
 }
-
 
 // Export the module
 module.exports = notification;
