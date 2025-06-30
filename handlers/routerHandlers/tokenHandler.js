@@ -144,7 +144,7 @@ handler._token.delete = (requestProperties, callback) => {
         // Delete the token
         data.delete('tokens', id, (err) => {
           if (!err) {
-            callback(200);
+            callback(200, { message: 'Token deleted successfully' });
           } else {
             callback(500, { error: 'Could not delete the specified token' });
           }
@@ -159,7 +159,6 @@ handler._token.delete = (requestProperties, callback) => {
 }
 
 // Verify if a given token id is currently valid for a given user
-
 handler._token.verify = (id, phone, callback) => {
   // Lookup the token
   data.read("tokens", id, (err, tokenData) => {
