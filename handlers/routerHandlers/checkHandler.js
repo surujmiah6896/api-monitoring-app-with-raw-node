@@ -312,5 +312,82 @@ handler._checks.put = (requestProperties, callback) => {
   }
 };
 
+// Checks - delete
+handler._checks.delete = (requestProperties, callback) => {
+  // Check if the id is valid
+  const id =
+    typeof requestProperties.queryStringObject.id === "string" &&
+    requestProperties.queryStringObject.id.trim().length === 20
+      ? requestProperties.queryStringObject.id.trim()
+      : false;
+
+  if (id) {
+    // Lookup the check
+    data.read("checks", id, (err, checkData) => {
+      if (!err && checkData) {
+        // Verify token
+        const token =
+          typeof requestProperties.headers.token === "string"
+            ? requestProperties.headers.token
+            : false;
+        // token verification
+        tokenHandler._token.verify(
+          token,
+          checkData.userPhone,
+          (tokenIsValid) => {
+            if (tokenIsValid) {
+              // Delete the check
+              data.delete("checks", id, (err) => {
+                if (!err) {
+                    // Lookup the user to remove the check id from user's checks
+                    data.read("users", checkData.userPhone, (err, userData) => {
+                    if (!err && userData) {
+                      const userObject = parseJsonToObject(userData);
+                      const userChecks =
+                        typeof userObject.checks === "object" &&
+                        userObject.checks instanceof Array
+                          ? userObject.checks
+                          : [];
+                      // Remove the check id from user's checks
+                      const checkPosition = userChecks.indexOf(id);
+                      if (checkPosition > -1) {
+                        userChecks.splice(checkPosition, 1);
+                        // Update the user data
+                        userObject.checks = userChecks;
+                        data.update("users", checkData.userPhone, userObject, (err) => {
+                          if (!err) {
+                            callback(200, { message: "Check deleted successfully" });
+                          } else {
+                            callback(500, { error: "Could not update the user" });
+                          }
+                        });
+                      } else {
+                        callback(500, { error: "Check id not found in user's checks" });
+                      }
+                    } else {
+                      callback(404, { error: "User not found" });
+                    }
+                  });
+                } else {
+                  callback(200, { message: "Check deleted successfully" });
+                }
+              });
+            } else {
+              callback(403, {
+                message: "Authentication failed",
+                status: "error",
+              });
+            }
+          }
+        );
+      } else {
+        callback(404, { error: "Check not found" });
+      }
+    });
+  } else {
+    callback(400, { error: "Missing required field" });
+  }
+};
+
 //export the handler
 module.exports = handler;
