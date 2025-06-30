@@ -14,28 +14,23 @@
 
 // Dependencies
 const http = require('http');
-const { handleReqRes } = require('./helpers/handleReqRes');
+const server = require('./lib/server');
+const worker = require('./lib/worker');
+
 
 // application object
 const app = {};
 
+app.init = () => {
+  // Create server
+  server.createServer();
 
-// Configuration
-app.config = {
-  port: 3000,
+  // Initialize worker
+  worker.init();
 }
-
-// Create server
-app.createServer = () => {
-  const server = http.createServer(app.handleReqRes);
-  // Start the server
-  server.listen(app.config.port, () => {
-    console.log(`Server is running on port ${app.config.port}`);
-  });
-}
-
-// Handle incoming requests and responses
-app.handleReqRes = handleReqRes;
 
 // Run the application
-app.createServer();
+app.init(); 
+
+// Export the app object for testing or other purposes
+module.exports = app;
