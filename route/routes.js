@@ -10,12 +10,14 @@
 |--------------------------------------------------
 */
 // Dependencies
-const {homeHandler} = require('../handlers/routerHandlers/homeHandler');
-const {userHandler} = require('../handlers/routerHandlers/userHandler');
+const { homeHandler } = require("../handlers/routerHandlers/homeHandler");
+const { userHandler } = require("../handlers/routerHandlers/userHandler");
+const { tokenHandler } = require('../handlers/routerHandlers/tokenHandler');
 
 const routes = {
     home: homeHandler,
     user: userHandler,
+    token: tokenHandler,
 };
 
 module.exports = routes;

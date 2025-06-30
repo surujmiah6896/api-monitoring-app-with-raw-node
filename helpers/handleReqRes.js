@@ -43,7 +43,7 @@ handler.handleReqRes = (req, res) => {
 
     const decoder = new StringDecoder('utf-8');
     let realData = '';
-
+    
     const chosenHandler = routes[path] ? routes[path] : notFoundHandler;
 
     // Collect the data from the request
@@ -58,6 +58,8 @@ handler.handleReqRes = (req, res) => {
         requestProperties.body = parseJsonToObject(realData);
 
         chosenHandler(requestProperties, (statusCode, payload) => {
+            console.log(`Status Code: ${statusCode}, Payload:`, payload);
+            
             statusCode = typeof statusCode === 'number' ? statusCode : 500;
             payload = typeof payload === 'object' ? payload : {};
     

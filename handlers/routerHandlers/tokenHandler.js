@@ -21,16 +21,16 @@ const handler = {};
 handler.tokenHandler = (requestProperties, callback) => {
   const acceptedMethods = ['post', 'get', 'put', 'delete'];
   if (acceptedMethods.indexOf(requestProperties.method) > -1) {
-    handler._tokens[requestProperties.method](requestProperties, callback);
+    handler._token[requestProperties.method](requestProperties, callback);
   } else {
     callback(405);
   }
 }
 
-handler._tokens = {};
+handler._token = {};
 
 // Tokens - post
-handler._tokens.post = (requestProperties, callback) => {
+handler._token.post = (requestProperties, callback) => {
   // Validate inputs
   const phone = typeof(requestProperties.body.phone) === 'string' && requestProperties.body.phone.trim().length === 11 ? requestProperties.body.phone.trim() : false;
   const password = typeof(requestProperties.body.password) === 'string' && requestProperties.body.password.trim().length > 0 ? requestProperties.body.password.trim() : false;
@@ -73,7 +73,7 @@ handler._tokens.post = (requestProperties, callback) => {
 }
 
 // Tokens - get
-handler._tokens.get = (requestProperties, callback) => {
+handler._token.get = (requestProperties, callback) => {
   // Check if the id is valid
   const id = typeof(requestProperties.queryStringObject.id) === 'string' && requestProperties.queryStringObject.id.trim().length === 20 ? requestProperties.queryStringObject.id.trim() : false;
 
@@ -95,7 +95,7 @@ handler._tokens.get = (requestProperties, callback) => {
 
 
 // Tokens - put
-handler._tokens.put = (requestProperties, callback) => {
+handler._token.put = (requestProperties, callback) => {
   // Validate inputs
   const id = typeof(requestProperties.body.id) === 'string' && requestProperties.body.id.trim().length === 20 ? requestProperties.body.id.trim() : false;
   const extend = !!requestProperties.body.extend;
@@ -103,6 +103,8 @@ handler._tokens.put = (requestProperties, callback) => {
   if (id && extend) {
     // Lookup the token
     data.read('tokens', id, (err, tokenData) => {
+      console.log("tokenData", tokenData);
+      
       if (!err && tokenData) {
         // Check to make sure the token isn't already expired
         if (tokenData.expires > Date.now()) {
@@ -112,7 +114,7 @@ handler._tokens.put = (requestProperties, callback) => {
           // Store the new updates
           data.update('tokens', id, tokenData, (err) => {
             if (!err) {
-              callback(200);
+              callback(200, { message: 'Token expiration updated successfully' });
             } else {
               callback(500, { error: 'Could not update the token expiration' });
             }
@@ -131,7 +133,7 @@ handler._tokens.put = (requestProperties, callback) => {
 
 
 // Tokens - delete
-handler._tokens.delete = (requestProperties, callback) => {
+handler._token.delete = (requestProperties, callback) => {
   // Check that the id is valid
   const id = typeof(requestProperties.queryStringObject.id) === 'string' && requestProperties.queryStringObject.id.trim().length === 20 ? requestProperties.queryStringObject.id.trim() : false;
 
@@ -158,9 +160,9 @@ handler._tokens.delete = (requestProperties, callback) => {
 
 // Verify if a given token id is currently valid for a given user
 
-handler._tokens.verifyToken = (id, phone, callback) => {
+handler._token.verify = (id, phone, callback) => {
   // Lookup the token
-  data.read('tokens', id, (err, tokenData) => {
+  data.read("tokens", id, (err, tokenData) => {
     if (!err && tokenData) {
       // Check that the token is for the given user and has not expired
       if (tokenData.phone === phone && tokenData.expires > Date.now()) {
@@ -172,7 +174,7 @@ handler._tokens.verifyToken = (id, phone, callback) => {
       callback(false);
     }
   });
-}
+};
 
 // Export the handler
-module.exports = handler.tokenHandler;
+module.exports = handler;

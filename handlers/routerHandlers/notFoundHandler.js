@@ -19,16 +19,8 @@ handler.notFoundHandler = (requestProperties, callback) => {
     message: 'The requested resource was not found',
     status: 'error',
   };
-
-  // Check the request method
-  if (requestProperties.method === 'get') {
-    callback(404, response);
-  } else {
-    callback(405, {
-      message: 'Method Not Allowed',
-      status: 'error',
-    });
-  }
+  callback(404, response);
+  
 }
 
 // Export the handler

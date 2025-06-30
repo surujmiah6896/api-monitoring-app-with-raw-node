@@ -124,10 +124,16 @@ handler._users.get = (requestProperties, callback) => {
 
   if (phone) {
     // verify token
+    console.log(
+      "requestProperties.headers",
+      requestProperties.headers.token === "string"
+    );
+    
     const token =
-      typeof requestProperties.headersObject.token === "string"
-        ? requestProperties.headersObject.token
+      typeof requestProperties.headers.token === "string"
+        ? requestProperties.headers.token
         : false;
+        
     tokenHandler._token.verify(token, phone, (tokenId) => {
       if (tokenId) {
         data.read("users", phone, (err, userData) => {
@@ -185,8 +191,8 @@ handler._users.put = (requestProperties, callback) => {
     if (firstName || lastName || password) {
       // verify token
       const token =
-        typeof requestProperties.headersObject.token === "string"
-          ? requestProperties.headersObject.token
+        typeof requestProperties.headers.token === "string"
+          ? requestProperties.headers.token
           : false;
       tokenHandler._token.verify(token, phone, (tokenId) => {
         if (tokenId) {
@@ -260,8 +266,8 @@ handler._users.delete = (requestProperties, callback) => {
 
     // verify token
     const token =
-    typeof requestProperties.headersObject.token === 'string'
-        ? requestProperties.headersObject.token
+    typeof requestProperties.headers.token === 'string'
+        ? requestProperties.headers.token
         : false;
 
     tokenHandler._token.verify(token, phone, (tokenId) => {
