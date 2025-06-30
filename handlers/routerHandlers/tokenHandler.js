@@ -161,6 +161,8 @@ handler._token.delete = (requestProperties, callback) => {
 // Verify if a given token id is currently valid for a given user
 handler._token.verify = (id, phone, callback) => {
   // Lookup the token
+ console.log("id---", id);
+ 
   data.read("tokens", id, (err, tokenData) => {
     if (!err && tokenData) {
       // Check that the token is for the given user and has not expired

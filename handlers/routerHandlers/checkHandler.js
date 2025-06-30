@@ -70,43 +70,84 @@ handler._checks.post = (requestProperties, callback) => {
       ? requestProperties.body.timeoutSeconds
       : false;
 
+      
   if (protocol && url && method && successCodes && timeoutSeconds) {
     // Verify token
     const token =
       typeof requestProperties.headers.token === "string"
         ? requestProperties.headers.token
         : false;
-
-    tokenHandler._token.verify(token, (tokenId) => {
-      if (tokenId) {
-        // Lookup the user
-        data.read("users", tokenId, (err, userData) => {
+    //lookup the user phone by reading the token
+    data.read("tokens", token, (err, tokenData) => {
+      if (!err && tokenData) {
+        const userPhone = tokenData.phone;
+        
+        // Lookup the user data
+        data.read("users", userPhone, (err, userData) => {
           if (!err && userData) {
-            // Create a random id for the check
-            const checkId = createRandomString(20);
-
-            // Create the check object and include the user's phone number
-            const checkObject = {
-              id: checkId,
-              userPhone: userData.phone,
-              protocol,
-              url,
-              method,
-              successCodes,
-              timeoutSeconds,
-            };
-
-            // Store the check object
-            data.create("checks", checkId, checkObject, (err) => {
-              if (!err) {
-                callback(200, checkObject);
-              } else {
-                callback(500, { error: "Could not create the new check" });
-              }
+            console.log("token, userPhone", token, userPhone);
+            
+            tokenHandler._token.verify(token, userPhone, (tokenIsValid) => {
+                if (tokenIsValid) {
+                    const userObject = parseJsonToObject(userData);
+                    const userChecks =
+                    typeof userObject.checks === "object" &&
+                    userObject.checks instanceof Array
+                    ? userObject.checks
+                    : [];
+                    if (userChecks.length < 5) {
+                      // Create a random id for the check
+                      const checkId = createRandomString(20);
+                      // Create the check object
+                      const checkObject = {
+                        id: checkId,
+                        userPhone,
+                        protocol,
+                        url,
+                        method,
+                        successCodes,
+                        timeoutSeconds,
+                      };
+                      // Save the check object
+                      data.create("checks", checkId, checkObject, (err) => {
+                        if (!err) {
+                          // Add the check id to the user's checks
+                          userObject.checks = userChecks;
+                          userObject.checks.push(checkId);
+                          // Update the user data
+                          data.update("users", userPhone, userObject, (err) => {
+                            if (!err) {
+                              callback(200, checkObject);
+                            } else {
+                              callback(500, {
+                                message: "Could not update the user",
+                                status: "error",
+                              });
+                            }
+                          });
+                        } else {
+                          callback(500, {
+                            message: "Could not create the new check",
+                            status: "error",
+                          });
+                        }
+                      });
+                    }else {
+                      callback(400, {
+                        message: "User already has maximum number of checks (5)",
+                        status: "error",
+                      });
+                    }
+                } else {
+                    callback(403, {
+                    message: "Authentication failed",
+                    status: "error",
+                    });
+                }
             });
           } else {
-            callback(403, {
-              message: "Authentication failed",
+            callback(404, {
+              message: "User not found",
               status: "error",
             });
           }
@@ -118,13 +159,15 @@ handler._checks.post = (requestProperties, callback) => {
         });
       }
     });
+   
   } else {
     callback(400, {
       message: "Missing required fields",
       status: "error",
     });
   }
-};
+};  
+
 
 
 //export the handler
