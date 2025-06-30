@@ -59,7 +59,7 @@ notification.sendTwilioSms = (phone, msg, callback) => {
           callback(`Status code returned was ${status}`);
         }
       });
-      
+
       // Handle any errors with the request
       req.on("error", (e) => {
         callback(`Error: ${e.message}`);
@@ -73,3 +73,7 @@ notification.sendTwilioSms = (phone, msg, callback) => {
       callback("Given parameters were missing or invalid");
     }
 }
+
+
+// Export the module
+module.exports = notification;
