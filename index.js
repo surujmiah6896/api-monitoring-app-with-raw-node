@@ -7,7 +7,7 @@
 | License: MIT
 |--------------------------------------------------
 | Version: 1.0.0
-| Last Updated: 29/5/2025
+| Last Updated: 30/6/2025
 |--------------------------------------------------
 */
 
@@ -31,6 +31,7 @@ app.init = () => {
 
 // Run the application
 app.init(); 
+
 
 // Export the app object for testing or other purposes
 module.exports = app;
